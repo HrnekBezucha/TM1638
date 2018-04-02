@@ -132,7 +132,8 @@ void reset(){  // clearing the registers
   digitalWrite(stb, LOW);
   shiftOut(dio, clk, LSBFIRST, 0b11000000);    // start at position 0
   for(uint8_t i=0; i < 16; i++){
-    shiftOut(dio, clk, LSBFIRST, 0b0000000);  // send 0
+    shiftOut(dio, clk, LSBFIRST, 0b0000);      // send 0
+    delay(10);
     }
   digitalWrite(stb, HIGH);
 }
@@ -142,17 +143,21 @@ void setup() {
   pinMode(clk, OUTPUT);
   pinMode(dio, OUTPUT);
 
-  sendCommand(0b10001010);  //brightness
+  sendCommand(0b10001001);  //brightness
   reset();
 
+  // this does work
+  // sends data digit by digit
+  // would be nice to wrap in function
+  // handling movement of the "cursor"
   sendDigit(dig1, blk);
   sendDigit(dig2, blk);
-  sendDigit(dig3, blk);
-  sendDigit(dig4, chH);
-  sendDigit(dig5, chE);
-  sendDigit(dig6, chL);
-  sendDigit(dig7, chL);
-  sendDigit(dig8, chO);
+  sendDigit(dig3, chA);
+  sendDigit(dig4, chC);
+  sendDigit(dig5, chC);
+  sendDigit(dig6, chE);
+  sendDigit(dig7, nm5);
+  sendDigit(dig8, nm5);
 
   delay(3000);
   reset();
@@ -161,6 +166,15 @@ void setup() {
 
 void loop() {
 
-
+//  this does not work
+//  a thing to figure out..
+//  digitalWrite(stb, LOW);
+//  shiftOut(stb, clk, LSBFIRST, 0b01000000);  //  auto-increment address
+//  shiftOut(stb, clk, LSBFIRST, 0b11000000);  //  first digit
+//  shiftOut(stb, clk, LSBFIRST, 0b0010);  //  data
+//  shiftOut(stb, clk, LSBFIRST, 0b0110);  //  data
+//  shiftOut(stb, clk, LSBFIRST, 0b0111);  //  data
+//  digitalWrite(stb, HIGH);
 
 }
+
