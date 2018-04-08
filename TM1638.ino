@@ -86,6 +86,9 @@ const uint8_t chG   = 0b00111101;
 const uint8_t chH   = 0b01110110;
 const uint8_t chL   = 0b00111000;
 const uint8_t chO   = 0b00111111;
+const uint8_t chR   = 0b01010000;
+const uint8_t chN   = 0b01010100;
+const uint8_t chT   = 0b01111000;
 
 const uint8_t nm0   = 0b00111111;  // definition of numbers
 const uint8_t nm1   = 0b00000110;
@@ -155,7 +158,7 @@ void reset(){  // clearing the registers
   shiftOut(dio, clk, LSBFIRST, 0b11000000);    // start at position 0
   for(uint8_t i=0; i < 16; i++){
     shiftOut(dio, clk, LSBFIRST, 0b0000);      // send 0
-    delay(10);
+    delay(15);
     }
   digitalWrite(stb, HIGH);
 }
@@ -168,18 +171,50 @@ void setup() {
   sendCommand(0b10001001);  //brightness
   reset();
 
-
+  sendDigit(dig1, chH);
+  sendDigit(dig2, chE);
+  sendDigit(dig3, chL);
+  sendDigit(dig4, chL);
+  sendDigit(dig5, chO);
+  sendDigit(dig6, blk);
+  sendDigit(dig7, blk);
+  sendDigit(dig8, blk);
+  
+  delay(5000);
+  reset();
 
 }
 
 void loop() {
+  
+  sendDigit(dig1, chA);
+  sendDigit(dig2, chC);
+  sendDigit(dig3, chC);
+  sendDigit(dig4, chE);
+  sendDigit(dig5, nm5);
+  sendDigit(dig6, nm5);
+  sendDigit(dig7, blk);
+  sendDigit(dig8, blk);
+  delay(1000);
+  reset();
+  sendDigit(dig1, blk);
+  sendDigit(dig2, chG);
+  sendDigit(dig3, chR);
+  sendDigit(dig4, chA);
+  sendDigit(dig5, chN);
+  sendDigit(dig6, chT);
+  sendDigit(dig7, chE);
+  sendDigit(dig8, chD);
+  delay(1000);
+  reset();
 
-  uint8_t buttons = readButtons();
-
-  for(uint8_t possition = 0; possition < 8; possition++){
-    uint8_t mask = 0b00000001 << possition;
-    setLed(button & mask ? 1 : 0, possition);
-    }
+  
+//  uint8_t buttons = readButtons();
+//  // logic add of led address and button address
+//  for(uint8_t possition = 0; possition < 8; possition++){
+//    uint8_t mask = 0b00000001 << possition;
+//    setLed(buttons & mask ? 1 : 0, possition);
+//    }
 
 }
 
