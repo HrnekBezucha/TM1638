@@ -126,6 +126,28 @@ void sendDigit(uint8_t address, uint8_t value) {
   digitalWrite(stb, HIGH);
 }
 
+uint8_t readButtons(void){
+  uint8_t buttons = 0;
+  digitalWrite(stb, LOW);
+  shiftOut(dio, clk, LSBFIRST, 0b01000010);  // reading buttons command
+  pinMode(dio, INPUT);  // setting data pin as input
+  for(uint8_t i=0; i<4; i++){
+    uint8_t v = shiftIn(dio, clk, LSBFIRST) << i;
+    buttons |= v;
+  }
+  pinMode(dio, OUTPUT);  // setting data pin back to output
+  digitalWrite(stb, HIGH);
+  return buttons;
+}
+
+void setLed(uint8_t value, uint8_t possition){
+  pinMode(dio, OUTPUT);  // make sure data pin is output
+  sendCommand(0b01000100);  // write to single location
+  digitalWrite(stb, LOW);
+  shiftOut(dio, clk, LSBFIRST, 0b11000001 + (possition << 1));
+  shiftOut(dio, clk, LSBFIRST, value);
+  digitalWrite(stb, HIGH);
+}
 
 void reset(){  // clearing the registers
   sendCommand(0b01000000); // set auto-increment mode
@@ -146,35 +168,18 @@ void setup() {
   sendCommand(0b10001001);  //brightness
   reset();
 
-  // this does work
-  // sends data digit by digit
-  // would be nice to wrap in function
-  // handling movement of the "cursor"
-  sendDigit(dig1, blk);
-  sendDigit(dig2, blk);
-  sendDigit(dig3, chA);
-  sendDigit(dig4, chC);
-  sendDigit(dig5, chC);
-  sendDigit(dig6, chE);
-  sendDigit(dig7, nm5);
-  sendDigit(dig8, nm5);
 
-  delay(3000);
-  reset();
 
 }
 
 void loop() {
 
-//  this does not work
-//  a thing to figure out..
-//  digitalWrite(stb, LOW);
-//  shiftOut(stb, clk, LSBFIRST, 0b01000000);  //  auto-increment address
-//  shiftOut(stb, clk, LSBFIRST, 0b11000000);  //  first digit
-//  shiftOut(stb, clk, LSBFIRST, 0b0010);  //  data
-//  shiftOut(stb, clk, LSBFIRST, 0b0110);  //  data
-//  shiftOut(stb, clk, LSBFIRST, 0b0111);  //  data
-//  digitalWrite(stb, HIGH);
+  uint8_t buttons = readButtons();
+
+  for(uint8_t possition = 0; possition < 8; possition++){
+    uint8_t mask = 0b00000001 << possition;
+    setLed(button & mask ? 1 : 0, possition);
+    }
 
 }
 
